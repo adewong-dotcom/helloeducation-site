@@ -9,15 +9,15 @@ const plans = { Inicia: { promo:29, regular:49, months:2 }, Avanza: { promo:49, 
 const PAYPAL_CHECKOUT = {
   Inicia: {
     es: 'https://www.paypal.com/ncp/payment/HYN84QU7YQPZE',
-    en: 'https://www.paypal.com/ncp/payment/HYN84QU7YQPZE'
+    en: 'https://www.paypal.com/ncp/payment/9SDGJUDZS5XKE'
   },
   Avanza: {
     es: 'https://www.paypal.com/ncp/payment/5TXZKLTZ7DHZE',
-    en: 'https://www.paypal.com/ncp/payment/5TXZKLTZ7DHZE'
+    en: 'https://www.paypal.com/ncp/payment/U87E3US4K8D5S'
   },
   Domina: {
     es: 'https://www.paypal.com/ncp/payment/SA7LETMGYMA9A',
-    en: 'https://www.paypal.com/ncp/payment/SA7LETMGYMA9A'
+    en: 'https://www.paypal.com/ncp/payment/JTTG7H2UDF3KL'
   }
 };
 
