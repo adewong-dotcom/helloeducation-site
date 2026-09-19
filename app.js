@@ -1,18 +1,34 @@
 'use strict';
-const PROMO_END = Date.parse('2026-09-26T00:00:00-06:00');
+const PROMO_END = Date.parse('2026-09-30T00:00:00-06:00');
 const ENROLLMENT_END = Date.parse('2026-10-05T00:00:00-06:00');
 const plans = { Inicia: { promo:29, regular:49, months:2 }, Avanza: { promo:49, regular:69, months:4 }, Domina: { promo:69, regular:89, months:6 } };
 // PayPal URLs stay the same; prices are managed in the PayPal backend.
+// One checkout URL per plan and language.
+// Each URL stays the same during and after the promotion.
+// Update the actual checkout prices directly in PayPal.
 const PAYPAL_CHECKOUT = {
- Inicia: { promo: 'https://www.paypal.com/ncp/payment/HYN84QU7YQPZE', regular: 'https://www.paypal.com/ncp/payment/HYN84QU7YQPZE' },
- Avanza: { promo: 'https://www.paypal.com/ncp/payment/5TXZKLTZ7DHZE', regular: 'https://www.paypal.com/ncp/payment/5TXZKLTZ7DHZE' },
- Domina: { promo: 'https://www.paypal.com/ncp/payment/SA7LETMGYMA9A', regular: 'https://www.paypal.com/ncp/payment/SA7LETMGYMA9A' }
+  Inicia: {
+    es: 'https://www.paypal.com/ncp/payment/HYN84QU7YQPZE',
+    en: 'https://www.paypal.com/ncp/payment/HYN84QU7YQPZE'
+  },
+  Avanza: {
+    es: 'https://www.paypal.com/ncp/payment/5TXZKLTZ7DHZE',
+    en: 'https://www.paypal.com/ncp/payment/5TXZKLTZ7DHZE'
+  },
+  Domina: {
+    es: 'https://www.paypal.com/ncp/payment/SA7LETMGYMA9A',
+    en: 'https://www.paypal.com/ncp/payment/SA7LETMGYMA9A'
+  }
 };
-function checkoutFor(name, now=Date.now()) {
- const state=offerState(now);
- if(!state.open) return null;
- return PAYPAL_CHECKOUT[name]?.[state.promo ? 'promo' : 'regular'] || null;
+
+function checkoutFor(name, now = Date.now()) {
+  const state = offerState(now);
+
+  if (!state.open) return null;
+
+  return PAYPAL_CHECKOUT[name]?.[lang] || null;
 }
+
 let lang = 'es';
 let selectedPlan = 'Avanza';
 const translations = [...document.querySelectorAll('[data-en]')].map(el => ({el,es:el.innerHTML,en:el.dataset.en}));
