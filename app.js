@@ -59,7 +59,50 @@ function setLanguage(value){
  refreshOffer();if(dialog.open)refreshDialog();
 }
 document.querySelectorAll('[data-lang]').forEach(button=>button.addEventListener('click',()=>setLanguage(button.dataset.lang)));
-document.querySelectorAll('[data-plan]').forEach(button=>button.addEventListener('click',()=>{selectedPlan=button.dataset.plan;const checkout=checkoutFor(selectedPlan);if(checkout){window.location.assign(checkout);return;}refreshDialog();dialog.showModal();}));
+document.querySelectorAll('[data-plan]').forEach(button=>button.addEventListener('click',()=>{selectedPlan=button.dataset.plan;
+                                                                                              const checkout=checkoutFor(selectedPlan);
+                                                                                              if (checkout) {
+  const goToCheckout = (() => {
+    let redirected = false;
+
+    return () => {
+      if (redirected) return;
+      redirected = true;
+      window.location.assign(checkout);
+    };
+  })();
+
+  // Continue to PayPal even if Analytics is blocked or unavailable.
+  const fallback = setTimeout(goToCheckout, 1200);
+
+  if (typeof window.gtag === 'function') {
+    const price = offerState().promo ? 49 : 69;
+
+    window.gtag('event', 'begin_checkout', {
+      currency: 'USD',
+      value: price,
+      course_language: lang,
+      items: [{
+        item_id: 'renpy-course',
+        item_name: 'Graphic Novel with RenPy',
+        price: price,
+        quantity: 1
+      }],
+      event_callback: () => {
+        clearTimeout(fallback);
+        goToCheckout();
+      },
+      event_timeout: 1000
+    });
+  } else {
+    clearTimeout(fallback);
+    goToCheckout();
+  }
+
+  return;
+}
+                                                                                              refreshDialog();
+                                                                                              dialog.showModal();}));
 document.querySelector('.close').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
 document.querySelector('#copy-email').addEventListener('click',async()=>{try{await navigator.clipboard.writeText('support@helloeducation.net');document.querySelector('#copy-status').textContent=lang==='en'?'Email copied.':'Correo copiado.';}catch{document.querySelector('#copy-status').textContent='support@helloeducation.net';}});
